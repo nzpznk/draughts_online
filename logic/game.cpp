@@ -32,9 +32,21 @@ void Game::initGame(const QString& path)
 //	}
 }
 
-void Game::move(int a, int b, bool isBlack)
+QPair<int, int> Game::move(const QPair<int, int>& st, const QPair<int, int>& ed)
 {
-
+	QPair<int, int> v(1, 1);
+	st.first < ed.first ? v.first = 1 : v.first = -1;
+	st.second < ed.second ? v.second = 1 : v.second = -1;
+	QPair<int, int> cur(st.first + v.first, st.second + v.second);
+	piece(ed) = piece(st);
+	piece(st) = Piece::NONE;
+	// return the Piece that should be removed
+	while(cur != ed) {
+		if(piece(cur) != Piece::NONE) {
+			qDebug() << "Piece: " << cur << "should be removed";
+			return cur;
+		}
+	}
 }
 
 QVector< QVector< QPair<int, int> > > Game::getAvaliableRoute(const QPair<int, int>& posi)

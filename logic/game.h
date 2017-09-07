@@ -6,7 +6,8 @@ class Game {
 public:
 	Game();
 	void initGame(const QString& path); // init to standard position
-	void move(int a, int b, bool isBlack); // move from position a to position b
+	// move from position st to position ed
+	QPair<int, int> move(const QPair<int, int>& st, const QPair<int, int>& ed);
 	// get all possiable routes with jump. if size == 0, the piece can only move.
 	QVector< QVector< QPair<int, int> > > getAvaliableRoute(const QPair<int, int>& posi); // test passed
 
