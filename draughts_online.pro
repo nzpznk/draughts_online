@@ -11,17 +11,15 @@ TARGET = draughts_online
 TEMPLATE = app
 
 SOURCES += \
-#        main.cpp\
-#        mainwindow.cpp
-        ./logic/game.cpp \
-    test/test.cpp \
-    logic/availiableroute.cpp
+#    main.cpp\
+#    mainwindow.cpp \
+    ./logic/game.cpp \
+    test/test.cpp
 
 HEADERS  += \
-#        mainwindow.h
-        ./logic/game.h \
+#    mainwindow.h \
+    ./logic/game.h \
     test/testgame.h \
-    logic/availiableroute.h \
     logic/piece.h
 
 FORMS    += \

@@ -7,6 +7,7 @@
 
 Game::Game()
 {
+	initGame("./standard.txt");
 }
 
 void Game::initGame(const QString& path)
@@ -46,7 +47,11 @@ QPair<int, int> Game::move(const QPair<int, int>& st, const QPair<int, int>& ed)
 			qDebug() << "Piece: " << cur << "should be removed";
 			return cur;
 		}
+		cur.first += v.first;
+		cur.second += v.second;
 	}
+	qDebug() << "error: No pieces removed";
+	return QPair<int, int>(-1, -1);
 }
 
 QVector< QVector< QPair<int, int> > > Game::getAvaliableRoute(const QPair<int, int>& posi)
@@ -133,6 +138,19 @@ QVector< QVector< QPair<int, int> > > Game::getAvaliableRoute(const QPair<int, i
 		}
 	}
 	return ans;
+}
+
+void Game::remove(const QVector<QPair<int, int> >& pieces)
+{
+	for(QPair<int, int> p : pieces) {
+		piece(p) = Piece::NONE;
+	}
+}
+
+void Game::upgrade(const QPair<int, int>& p)
+{
+	if(p.first == 0 && piece(p) == Piece::WHITE) piece(p) = WKING;
+	if(p.first == 9 && piece(p) == Piece::BLACK) piece(p) = BKING;
 }
 
 bool Game::valid(const QPair<int, int>& posi)
