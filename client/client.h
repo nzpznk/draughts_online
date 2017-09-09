@@ -29,10 +29,8 @@ public:
 //	void updateRoutes();
 
 private:
-//	Game* game;
-//	QMap< QPair<int, int>, QVector< QVector< QPair<int, int> > > > routes;
-//	bool isBlack;
-	bool isHost;
+	Game* game;
+	bool isBlack;
 	QTcpSocket* readWriteSocket;
 };
 

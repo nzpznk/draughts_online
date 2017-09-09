@@ -7,7 +7,8 @@ enum Piece {
 	WHITE,
 	BLACK,
 	WKING,
-	BKING
+	BKING,
+	HINT
 };
 
 #endif // PIECE_H

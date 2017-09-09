@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/picture">
+        <file>resources/background.png</file>
+        <file>resources/bking.png</file>
+        <file>resources/black.png</file>
+        <file>resources/hint.png</file>
+        <file>resources/white.png</file>
+        <file>resources/wking.png</file>
+    </qresource>
+</RCC>

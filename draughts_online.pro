@@ -11,30 +11,40 @@ TARGET = draughts_online
 TEMPLATE = app
 
 SOURCES += \
-    main.cpp\
+#    main.cpp\
 #    mainwindow.cpp \
-    logic/game.cpp \
-    client/client.cpp \
+#    logic/game.cpp \
+#    client/client.cpp \
+#    test/simpleserver.cpp \
+#    UI/welcome.cpp \
+#    main.cpp \
+#    UI/draughtsboard.cpp \
+    UI/piecebtn.cpp \
+    test/testpiecebtn.cpp \
     test/test.cpp \
-    test/simpleserver.cpp \
-    UI/welcome.cpp \
-    main.cpp
+    UI/icons.cpp
 
 HEADERS  += \
 #    mainwindow.h \
-    logic/game.h \
+#    logic/game.h \
     logic/piece.h \
-    client/client.h \
-    client/message.h \
-    test/testgame.h \
-    test/testnetwork.h \
-    test/simpleserver.h \
-    UI/welcome.h
+#    client/client.h \
+#    client/message.h \
+#    test/testgame.h \
+#    test/testnetwork.h \
+#    test/simpleserver.h \
+#    UI/welcome.h \
+#    UI/draughtsboard.h \
+    UI/piecebtn.h \
+    test/testpiecebtn.h \
+    UI/icons.h
 
 FORMS    += \
 #        mainwindow.ui \
-#    client/client.ui
-    UI/welcome.ui
+#    client/client.ui \
+#    UI/welcome.ui \
+#    UI/draughtsboard.ui \
+    test/testpiecebtn.ui
 
 INCLUDEPATH += \
         ./logic \
@@ -43,3 +53,6 @@ INCLUDEPATH += \
         ./test
 
 # Directories
+
+RESOURCES += \
+    resources.qrc
