@@ -3,7 +3,7 @@
 ######################################################################
 
 QT       += core gui
-QT += network
+QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,22 +11,35 @@ TARGET = draughts_online
 TEMPLATE = app
 
 SOURCES += \
-#    main.cpp\
+    main.cpp\
 #    mainwindow.cpp \
-    ./logic/game.cpp \
-    test/test.cpp
+    logic/game.cpp \
+    client/client.cpp \
+    test/test.cpp \
+    test/simpleserver.cpp \
+    UI/welcome.cpp \
+    main.cpp
 
 HEADERS  += \
 #    mainwindow.h \
-    ./logic/game.h \
+    logic/game.h \
+    logic/piece.h \
+    client/client.h \
+    client/message.h \
     test/testgame.h \
-    logic/piece.h
+    test/testnetwork.h \
+    test/simpleserver.h \
+    UI/welcome.h
 
 FORMS    += \
-#        mainwindow.ui
+#        mainwindow.ui \
+#    client/client.ui
+    UI/welcome.ui
 
 INCLUDEPATH += \
         ./logic \
+        ./client \
+        ./UI \
         ./test
 
 # Directories

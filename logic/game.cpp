@@ -23,14 +23,13 @@ void Game::initGame(const QString& path)
 		for(int j = 0; j < 10; ++j) {
 			tr >> tmp;
 			mat[i][j] = Piece(tmp);
+			if(mat[i][j] == Piece::BLACK || mat[i][j] == Piece::BKING) {
+				blackPieces.insert(QPair<int, int>(i, j));
+			} else if (mat[i][j] == Piece::WHITE || mat[i][j] == Piece::WKING) {
+				whitePieces.insert(QPair<int, int>(i, j));
+			} else;
 		}
 	}
-//	for(int i = 0; i < 10; ++i) {
-//		for(int j = 0; j < 10; ++j) {
-//			std::cout << mat[i][j];
-//		}
-//		std::cout << std::endl;
-//	}
 }
 
 QPair<int, int> Game::move(const QPair<int, int>& st, const QPair<int, int>& ed)
@@ -147,6 +146,35 @@ void Game::remove(const QVector<QPair<int, int> >& pieces)
 	}
 }
 
+QMap<QPair<int, int>, QVector<QVector<QPair<int, int> > > > Game::getAllMovablePieces(bool isBlack)
+{
+	const QSet< QPair<int, int> >& pieces = isBlack ? blackPieces : whitePieces;
+	QMap< QPair<int, int>, QVector< QVector< QPair<int, int> > > > ans;
+	int maxLen = 0;
+	for(QPair<int, int> p : pieces) {
+		ans.insert(p, getAvaliableRoute(p));
+		if(ans[p].size() && ans[p][0].size() > maxLen) {
+			maxLen = ans[p][0].size();
+		}
+	}
+	for(auto iter = ans.begin(); iter != ans.end(); ++iter) {
+		if(iter.value().size() && iter.value()[0].size() < 2) {
+			ans.remove(iter.key());
+			continue;
+		}
+		if(iter.value().size() && iter.value()[0].size() == maxLen) continue;
+		ans.remove(iter.key());
+	} // 得到所有能吃子的走法
+	if(ans.size() != 0) return ans; // 能吃子必须吃
+	for(QPair<int, int> p : pieces) { // 不能吃子随便走
+		auto non_eat_route = nonEatRoute(p);
+		if(non_eat_route.size()) {
+			ans.insert(p, non_eat_route);
+		}
+	}
+	return ans;
+}
+
 void Game::upgrade(const QPair<int, int>& p)
 {
 	if(p.first == 0 && piece(p) == Piece::WHITE) piece(p) = WKING;
@@ -157,6 +185,31 @@ bool Game::valid(const QPair<int, int>& posi)
 {
 	if(posi.first > 9 || posi.second > 9 || posi.first < 0 || posi.second < 0) return false;
 	else return true;
+}
+
+QVector<QVector<QPair<int, int> > > Game::nonEatRoute(const QPair<int, int>& p)
+{
+	QVector< QVector< QPair<int, int> > > ans;
+	for(int i = 0; i < 4; ++i) {
+		QPair<int, int> nposi(p.first + dx[i], p.second + dy[i]);
+		if(!valid(nposi)) continue;
+		if(piece(p) == Piece::WHITE || piece(p) == Piece::BLACK) {
+			if(piece(nposi) == Piece::NONE) {
+				ans.push_back(QVector< QPair<int, int> >({p, nposi}));
+			} else {
+				continue;
+			}
+		} else if (piece(p) == Piece::WKING || piece(p) == Piece::BKING) {
+			while(valid(nposi) && piece(nposi) == Piece::NONE) {
+				ans.push_back(QVector< QPair<int, int> >({p, nposi}));
+				nposi.first += dx[i];
+				nposi.second += dy[i];
+			}
+		} else {
+			qDebug() << "the piece should not be" << piece(p);
+		}
+	}
+	return ans;
 }
 
 Piece& Game::piece(const QPair<int, int>& posi)

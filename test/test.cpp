@@ -1,13 +1,22 @@
-﻿#include <qDebug>
+﻿#include <QApplication>
+#include <qDebug>
 
-#define TESTGAME
-
+//#define TESTGAME
+#define TESTNETWORK
 
 #ifdef TESTGAME
 #include "test/testGame.h"
 #endif // TESTGAME
 
-int main() {
-	testGame();
-	return 0;
-}
+#ifdef TESTNETWORK
+#include "test/testnetwork.h"
+#endif // TESTNETWORK
+
+//int main(int argc, char *argv[]) {
+//	QApplication app(argc, argv);
+
+////	testGame();
+//	testNetWork();
+
+//	return app.exec();
+//}
