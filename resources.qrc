@@ -7,4 +7,7 @@
         <file>resources/white.png</file>
         <file>resources/wking.png</file>
     </qresource>
+    <qresource prefix="/sound">
+        <file>resources/settle.wav</file>
+    </qresource>
 </RCC>

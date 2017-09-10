@@ -8,6 +8,7 @@ QPixmap& Icons::getIcon(Piece p)
 		instance = new Icons;
 	}
 	switch(p) {
+	case Piece::NONE: return instance->m_none_icon;
 	case Piece::WHITE: return instance->m_white_icon;
 	case Piece::BLACK: return instance->m_black_icon;
 	case Piece::WKING: return instance->m_wking_icon;

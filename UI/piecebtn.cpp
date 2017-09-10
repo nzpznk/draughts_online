@@ -4,6 +4,9 @@ PieceBtn::PieceBtn(QWidget* parent): \
 	QLabel(parent),
 	m_clickable(false)
 {
+	m_borderStyle = "border: 2px solid rgba(255, 255, 0, 0);";
+	m_backgroundStyle = "background-color: none;";
+	updateStyle();
 }
 
 PieceBtn::~PieceBtn()
@@ -18,10 +21,6 @@ void PieceBtn::setClickable(bool clickable)
 
 void PieceBtn::setIcon(Piece p)
 {
-	if(p == Piece::NONE) {
-		setPixmap(QPixmap());
-		return;
-	}
 	setPixmap(Icons::getIcon(p));
 }
 
@@ -63,5 +62,6 @@ void PieceBtn::mouseReleaseEvent(QMouseEvent* ev)
 	{
 		return;
 	}
+	qDebug() << "mouseReleased";
 	emit clicked();
 }

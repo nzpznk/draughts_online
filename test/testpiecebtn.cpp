@@ -62,3 +62,8 @@ void TestPieceBtn::on_pushButton_5_clicked()
 {
 	ui->label->setIcon(Piece::HINT);
 }
+
+void TestPieceBtn::on_pushButton_6_clicked()
+{
+	ui->label->setIcon(Piece::NONE);
+}

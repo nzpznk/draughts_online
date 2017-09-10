@@ -11,12 +11,13 @@ public:
 	static QPixmap& getIcon(Piece p);
 private:
 	Icons();
+	QPixmap m_none_icon;
 	QPixmap m_white_icon;
 	QPixmap m_black_icon;
 	QPixmap m_wking_icon;
 	QPixmap m_bking_icon;
 	QPixmap m_hint_icon;
-	static Icons* instance;
+	static Icons* instance; // singleton
 };
 
 #endif // ICONS_H
