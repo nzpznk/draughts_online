@@ -22,6 +22,7 @@ void PieceBtn::setClickable(bool clickable)
 void PieceBtn::setIcon(Piece p)
 {
 	setPixmap(Icons::getIcon(p));
+	this->m_category = p;
 }
 
 void PieceBtn::showAvaliable(bool avaliable)
@@ -42,6 +43,11 @@ void PieceBtn::showChosen(bool chosen)
 		m_backgroundStyle = "background-color: none;";
 	}
 	updateStyle();
+}
+
+Piece PieceBtn::getCategory()
+{
+	return m_category;
 }
 
 void PieceBtn::updateStyle()

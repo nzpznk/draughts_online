@@ -1,9 +1,9 @@
 ﻿#include "client.h"
 
-Client::Client()
+Client::Client(QObject* parent) : QObject(parent)
 {
+	this->readWriteSocket = new QTcpSocket;
 	game = new Game;
-	game->initGame("./standard.txt");
 }
 
 Client::~Client()
@@ -12,16 +12,22 @@ Client::~Client()
 	game = nullptr;
 }
 
-void Client::connectHost(int port)
+void Client::connectHost(const QHostAddress& host, int hostPort)
 {
-	this->readWriteSocket = new QTcpSocket;
-	this->readWriteSocket->connectToHost(QHostAddress("127.0.0.1"), port);
+	this->readWriteSocket->connectToHost(host, hostPort);
 	connect(this->readWriteSocket, SIGNAL(readyRead()), this, SLOT(receiveMsg()));
+}
+
+void Client::startGame(const QString& path)
+{
+	game->initGame(path);
+	emit initDaughtsBoard(game->getMat());
 }
 
 void Client::chooseBtn(const QPair<int, int>& posi)
 {
-	if(!m_next_btns.contains(posi)) {
+	qDebug() << "Client::chooseBtn slot called";
+	if(!m_next_btns.contains(posi)) { // 点到的棋子属于m_root_btns
 		emit setChosenMsg(m_chosen_btns, false);
 		m_chosen_btns.clear();
 	}
@@ -29,7 +35,15 @@ void Client::chooseBtn(const QPair<int, int>& posi)
 	updateHints();
 	updateNextBtns();
 	if(m_chosen_btns.size() == m_all_avaliable_routes[m_chosen_btns[0]][0].size()) {
-		emit moveMsg(m_chosen_btns);
+		qDebug() << "emit Client::moveMsg()";
+		emit movePieces(m_chosen_btns);
+		sendMsg(Message("move", m_chosen_btns));
+		emit updateHintMsg(m_hint_btns, false);
+		m_hint_btns.clear();
+		emit updateAvaliableMsg(m_root_btns + m_next_btns, false);
+		m_root_btns.clear();
+		m_next_btns.clear();
+		m_chosen_btns.clear();
 	}
 }
 
@@ -43,15 +57,41 @@ void Client::receiveMsg()
 		if(!s.commitTransaction()) return;
 		qDebug() << "client received message from server:" << msg.str << msg.vec;
 		solveMsg(msg);
-	}	
+	}
+}
+
+void Client::movePieces(const QVector<QPair<int, int> > pieces)
+{
+	QVector< QPair<int, int> > toRemove;
+	for(int i = 0; i < pieces.size() - 1; ++i) {
+		auto tmp = game->move(pieces[i], pieces[i + 1]);
+		qDebug() << "Client::movePieces: movepath" << pieces;
+		if(tmp.first == -1 && tmp.second == -1) continue;
+		toRemove.push_back(tmp);
+	}
+	emit moveMsg(pieces);
+	if(game->upgrade(pieces[pieces.size()-1])) {
+		qDebug() << "upgrading" << pieces[pieces.size()-1];
+		emit upgradeMsg(pieces[pieces.size()-1]);
+	}
+	emit removePieces(toRemove);
+}
+
+void Client::removePieces(const QVector<QPair<int, int> > pieces)
+{
+	game->remove(pieces);
+	emit removeMsg(pieces);
 }
 
 void Client::solveMsg(const Message& msg)
 {
 	if(msg.str == "move") {
-		emit moveMsg(msg.vec);
-	} else if (msg.str == "remove") {
-		emit removeMsg(msg.vec);
+		emit movePieces(msg.vec);
+		m_all_avaliable_routes = game->getAllMovablePieces(isBlack);
+		foreach (auto key, m_all_avaliable_routes.keys()) {
+			m_root_btns.insert(key);
+		}
+		emit updateAvaliableMsg(m_root_btns, true);
 	} else if (msg.str == "finish") { // if the other one finished, it's turn
 		m_all_avaliable_routes = game->getAllMovablePieces(isBlack);
 		emit updateAvaliableMsg(m_root_btns, false);
@@ -64,8 +104,18 @@ void Client::solveMsg(const Message& msg)
 		//////////// remove hints and avaliable btns
 	} else if (msg.str == "black") {
 		isBlack = true;
+		m_all_avaliable_routes = game->getAllMovablePieces(isBlack);
+		foreach (auto key, m_all_avaliable_routes.keys()) {
+			m_root_btns.insert(key);
+		}
+		emit updateAvaliableMsg(m_root_btns, true);
 	} else if (msg.str == "white") {
 		isBlack = false;
+//		m_all_avaliable_routes = game->getAllMovablePieces(isBlack);
+//		foreach (auto key, m_all_avaliable_routes.keys()) {
+//			m_root_btns.insert(key);
+//		}
+		emit updateAvaliableMsg(m_root_btns, true);
 	} else if (msg.str == "win") {
 		emit showWinMsg(true);
 	} else if (msg.str == "lose") {
@@ -75,6 +125,7 @@ void Client::solveMsg(const Message& msg)
 
 void Client::updateHints()
 {
+	if(!m_chosen_btns.size()) return;
 	QSet< QPair<int, int> > newhints;
 	auto routes = m_all_avaliable_routes[m_chosen_btns[0]];
 	for(auto route : routes) {
@@ -97,6 +148,7 @@ void Client::updateHints()
 
 void Client::updateNextBtns()
 {
+	if(!m_chosen_btns.size()) return;
 	QSet< QPair<int, int> > new_next_btns;
 	auto routes = m_all_avaliable_routes[m_chosen_btns[0]];
 	for(auto route : routes) {
@@ -108,12 +160,13 @@ void Client::updateNextBtns()
 			}
 		}
 		if(flag) continue;
-		if(m_chosen_btns.size() < route.size() - 1) {
+		if(m_chosen_btns.size() < route.size()) {
 			new_next_btns.insert(route[m_chosen_btns.size()]);
 		}
 	}
+	emit updateAvaliableMsg(m_next_btns - new_next_btns, false);  // 移除的可点击棋子
 	emit updateAvaliableMsg(new_next_btns - m_next_btns, true); // 新加入的可点击棋子
-	emit updateHintMsg(m_next_btns - new_next_btns, false); // 移除的可点击棋子
+//	emit updateHintMsg(m_next_btns - new_next_btns, false);
 	m_next_btns = new_next_btns;
 }
 
@@ -122,20 +175,6 @@ void Client::sendMsg(const Message& msg)
 	QDataStream s(readWriteSocket);
 	s << msg;
 }
-
-//void Client::choose(const QPair<int, int>& p)
-//{
-//	if( isBlack && (game->piece(p) == Piece::BLACK || game->piece(p) == Piece::BKING) || \
-//		!isBlack && (game->piece(p) == Piece::WHITE || game->piece(p) == Piece::WKING) )
-//	{
-
-//	}
-//}
-
-//void Client::updateRoutes()
-//{
-//	this->routes = game->getAllMovablePieces(this->isBlack);
-//}
 
 void Client::on_pushButton_clicked()
 {

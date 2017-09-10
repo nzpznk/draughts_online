@@ -25,15 +25,17 @@ public:
 	// all the movable pieces and their routes
 	QMap< QPair<int, int>, QVector< QVector< QPair<int, int> > > > getAllMovablePieces(bool isBlack);
 
-	void upgrade(const QPair<int, int>& p);
+	bool upgrade(const QPair<int, int>& p);
 
 	Piece& piece(const QPair<int, int>& posi);
+
+	const QVector< QVector<Piece> >& getMat();
 
 private:
 	bool valid(const QPair<int, int>& posi);
 
 private:
-	Piece mat[10][10];
+	QVector< QVector<Piece> > mat;
 	QSet< QPair<int, int> > blackPieces;
 	QSet< QPair<int, int> > whitePieces;
 	int dx[4] = {-1, -1, 1, 1};

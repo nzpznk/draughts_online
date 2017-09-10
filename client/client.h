@@ -11,27 +11,34 @@
 #include "client/message.h"
 #include "logic/game.h"
 
-class Client : QObject
+class Client : public QObject
 {
 
+	Q_OBJECT
+
 signals:
+	void initDaughtsBoard(const QVector< QVector<Piece> >& mat);
 	void setChosenMsg(const QVector< QPair<int, int> >& vec, bool choose);
-	void updateAvaliableMsg(const QSet< QPair<int, int> >& btns, bool avaliable);
+	void updateAvaliableMsg(const QSet< QPair<int, int> >& btns, bool avaliable); // connected
 	void updateHintMsg(const QSet< QPair<int, int> >& btns, bool hint);
 	void moveMsg(const QVector< QPair<int, int> >& btns);
 	void removeMsg(const QVector< QPair<int, int> >& btns);/////////////
 	void showWinMsg(bool isWinner);
+	void upgradeMsg(const QPair<int, int>& p);
 
 public:
-	explicit Client();
+	explicit Client(QObject* parent = 0);
 	~Client();
-	void connectHost(int port);
 
 public slots:
+	void connectHost(const QHostAddress& host, int hostPort);
+	void startGame(const QString& path);
 	void chooseBtn(const QPair<int, int>& posi);
 
 private slots:
 	void receiveMsg();
+	void movePieces(const QVector<QPair<int, int> > pieces);
+	void removePieces(const QVector<QPair<int, int> > pieces);
 
 private:
 	void solveMsg(const Message& msg);
@@ -49,10 +56,10 @@ public:
 
 private:
 	Game* game;
-	QSet< QPair<int, int> > m_next_btns;
-	QSet< QPair<int, int> > m_root_btns;
-	QSet< QPair<int, int> > m_hint_btns;
-	QVector< QPair<int, int> > m_chosen_btns;
+	QSet< QPair<int, int> > m_next_btns; // 下一步可以落子的地方(由m_all_avaliable_routes和m_chosen_btns决定)
+	QSet< QPair<int, int> > m_root_btns; // 这一轮的起始落子点(每轮更新一次, 由m_all_avaliable_routes决定)
+	QSet< QPair<int, int> > m_hint_btns; // 提示的之后落子的路径(由m_all_avaliable_routes和m_chosen_btns决定)
+	QVector< QPair<int, int> > m_chosen_btns; // 已经选中的棋子
 	QMap< QPair<int, int>, QVector< QVector< QPair<int, int> > > > m_all_avaliable_routes;
 	bool isBlack;
 	QTcpSocket* readWriteSocket;

@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QVector>
 #include <QDebug>
-
+#include <QPropertyAnimation>
 #include "UI/piecebtn.h"
 #include "logic/piece.h"
 
@@ -28,6 +28,12 @@ public slots:
 	void setAvaliable(const QSet< QPair<int, int> >& btns, bool avaliable);
 	void showHint(const QSet< QPair<int, int> >& btns, bool hint);
 	void setChosen(const QVector< QPair<int, int> >& vec, bool chosen);
+	void movePieces(const QVector< QPair<int, int> >& vec);
+	void removePieces(const QVector< QPair<int, int> >& vec);
+	void upgrade(const QPair<int, int>& p);
+
+private slots:
+	void on_sound_toggled(bool soundOn);
 
 private:
 	void btnClicked(const QPair<int, int>& posi);

@@ -28,7 +28,7 @@ void Welcome::on_checkBox_toggled(bool checked)
 		ui->host_ip->setEnabled(false);
 	} else {
 		isServer = false;
-		ui->host_ip->setText("");
+		ui->host_ip->setText("183.172.130.219");
 		ui->host_ip->setEnabled(true);
 	}
 }
@@ -59,7 +59,7 @@ void Welcome::startConnection()
 		qDebug() << "emit initServerMsg:" << serverPort;
 		emit initServerMsg(serverPort);
 	}
-	int clientPort = ui->client_port->text().toInt();
-	qDebug() << "emit initClientMsg:" << QHostAddress(ui->host_ip->text()) << serverPort << clientPort;
-	emit initClientMsg(QHostAddress(ui->host_ip->text()), serverPort, clientPort);
+	qDebug() << "emit initClientMsg:" << QHostAddress(ui->host_ip->text()) << "serverPort:" << serverPort;
+	emit initGameMsg("./test.txt");
+	emit initClientMsg(QHostAddress(ui->host_ip->text()), serverPort);
 }

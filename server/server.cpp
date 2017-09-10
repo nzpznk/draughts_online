@@ -11,8 +11,10 @@ void Server::initServer(int port)
 {
 	listenSocket = new QTcpServer;
 	listenSocket->listen(QHostAddress::Any, port);
+	qDebug() << "server listening port:" << port;
 	connect(this->listenSocket, &QTcpServer::newConnection, [&]() {
 		QTcpSocket* socket = listenSocket->nextPendingConnection();
+		qDebug() << "recieved connection request:" << socket->peerAddress();
 		if(m_waiting_tables.size()) {
 			int t = *m_waiting_tables.constBegin();
 			player2.insert(t, socket);
@@ -53,12 +55,12 @@ void Server::gameStart(int table)
 		sendTo(sock2, msg);
 	});
 	connect(sock2, &QTcpSocket::readyRead, [=]() {
-		Message msg = getMsg(sock1);
+		Message msg = getMsg(sock2);
 		if(msg.str == "finish") {
 			removeConnection(table);
 			return;
 		}
-		sendTo(sock2, msg);
+		sendTo(sock1, msg);
 	});
 }
 
@@ -67,7 +69,7 @@ Message Server::getMsg(QTcpSocket* socket)
 	Message ans;
 	QDataStream s(socket);
 	s >> ans;
-//	if(ans.str == "finish") {
+//	if(ans.str == "over") {
 //		delete socket;
 //		socket = nullptr;
 //	}
@@ -87,7 +89,7 @@ void Server::sendTo(QTcpSocket* socket, const Message& info)
 {
 	QDataStream s(socket);
 	s << info;
-//	if(info.str == "finish") {
+//	if(info.str == "over") {
 
 //	}
 }

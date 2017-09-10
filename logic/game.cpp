@@ -7,7 +7,6 @@
 
 Game::Game()
 {
-	initGame("./standard.txt");
 }
 
 void Game::initGame(const QString& path)
@@ -20,15 +19,17 @@ void Game::initGame(const QString& path)
 	int tmp;
 	QTextStream tr(&fl);
 	for(int i = 0; i < 10; ++i) {
+		QVector<Piece> row;
 		for(int j = 0; j < 10; ++j) {
 			tr >> tmp;
-			mat[i][j] = Piece(tmp);
-			if(mat[i][j] == Piece::BLACK || mat[i][j] == Piece::BKING) {
+			row.push_back(Piece(tmp));
+			if(row[j] == Piece::BLACK || row[j] == Piece::BKING) {
 				blackPieces.insert(QPair<int, int>(i, j));
-			} else if (mat[i][j] == Piece::WHITE || mat[i][j] == Piece::WKING) {
+			} else if (row[j] == Piece::WHITE || row[j] == Piece::WKING) {
 				whitePieces.insert(QPair<int, int>(i, j));
 			} else;
 		}
+		mat.push_back(row);
 	}
 }
 
@@ -40,6 +41,13 @@ QPair<int, int> Game::move(const QPair<int, int>& st, const QPair<int, int>& ed)
 	QPair<int, int> cur(st.first + v.first, st.second + v.second);
 	piece(ed) = piece(st);
 	piece(st) = Piece::NONE;
+	if(piece(ed) == Piece::BKING || piece(ed) == Piece::BLACK) {
+		blackPieces.remove(st);
+		blackPieces.insert(ed);
+	} else if(piece(ed) == Piece::WKING || piece(ed) == Piece::WHITE) {
+		whitePieces.remove(st);
+		whitePieces.insert(ed);
+	}
 	// return the Piece that should be removed
 	while(cur != ed) {
 		if(piece(cur) != Piece::NONE) {
@@ -142,6 +150,14 @@ QVector< QVector< QPair<int, int> > > Game::getAvaliableRoute(const QPair<int, i
 void Game::remove(const QVector<QPair<int, int> >& pieces)
 {
 	for(QPair<int, int> p : pieces) {
+		if(p.first == -1 && p.second == -1) return;
+		if(piece(p) == Piece::BLACK || piece(p) == Piece::BKING) {
+			blackPieces.remove(p);
+		} else if(piece(p) == Piece::WHITE || piece(p) == Piece::WKING) {
+			whitePieces.remove(p);
+		} else {
+			qDebug() << "Game::remove() there is" << piece(p) << "in the remove list";
+		}
 		piece(p) = Piece::NONE;
 	}
 }
@@ -157,13 +173,11 @@ QMap<QPair<int, int>, QVector<QVector<QPair<int, int> > > > Game::getAllMovableP
 			maxLen = ans[p][0].size();
 		}
 	}
-	for(auto iter = ans.begin(); iter != ans.end(); ++iter) {
-		if(iter.value().size() && iter.value()[0].size() < 2) {
-			ans.remove(iter.key());
-			continue;
+	auto keys = ans.keys();
+	foreach (auto key, keys) {
+		if(!ans[key].size() || ans[key][0].size() < 2 || ans[key][0].size() < maxLen) {
+			ans.remove(key);
 		}
-		if(iter.value().size() && iter.value()[0].size() == maxLen) continue;
-		ans.remove(iter.key());
 	} // 得到所有能吃子的走法
 	if(ans.size() != 0) return ans; // 能吃子必须吃
 	for(QPair<int, int> p : pieces) { // 不能吃子随便走
@@ -175,10 +189,17 @@ QMap<QPair<int, int>, QVector<QVector<QPair<int, int> > > > Game::getAllMovableP
 	return ans;
 }
 
-void Game::upgrade(const QPair<int, int>& p)
+bool Game::upgrade(const QPair<int, int>& p)
 {
-	if(p.first == 0 && piece(p) == Piece::WHITE) piece(p) = WKING;
-	if(p.first == 9 && piece(p) == Piece::BLACK) piece(p) = BKING;
+	if(p.first == 0 && piece(p) == Piece::WHITE) {
+		piece(p) = WKING;
+		return true;
+	}
+	if(p.first == 9 && piece(p) == Piece::BLACK) {
+		piece(p) = BKING;
+		return true;
+	}
+	return false;
 }
 
 bool Game::valid(const QPair<int, int>& posi)
@@ -194,6 +215,11 @@ QVector<QVector<QPair<int, int> > > Game::nonEatRoute(const QPair<int, int>& p)
 		QPair<int, int> nposi(p.first + dx[i], p.second + dy[i]);
 		if(!valid(nposi)) continue;
 		if(piece(p) == Piece::WHITE || piece(p) == Piece::BLACK) {
+			if(piece(p) == Piece::WHITE) {
+				if(nposi.first > p.first) continue;
+			} else {
+				if(nposi.first < p.first) continue;
+			}
 			if(piece(nposi) == Piece::NONE) {
 				ans.push_back(QVector< QPair<int, int> >({p, nposi}));
 			} else {
@@ -215,4 +241,9 @@ QVector<QVector<QPair<int, int> > > Game::nonEatRoute(const QPair<int, int>& p)
 Piece& Game::piece(const QPair<int, int>& posi)
 {
 	return mat[posi.first][posi.second];
+}
+
+const QVector<QVector<Piece> >&Game::getMat()
+{
+	return mat;
 }

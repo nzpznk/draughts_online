@@ -23,6 +23,7 @@ public:
 	void setIcon(Piece p);
 	void showAvaliable(bool avaliable);
 	void showChosen(bool chosen);
+	Piece getCategory();
 
 private:
 	void updateStyle();
@@ -32,6 +33,7 @@ private:
 private:
 	QString m_borderStyle;
 	QString m_backgroundStyle;
+	Piece m_category;
 	bool m_clickable;
 
 };

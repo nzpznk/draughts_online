@@ -58,9 +58,46 @@ void DraughtsBoard::setChosen(const QVector<QPair<int, int> >& vec, bool chosen)
 	}
 }
 
+void DraughtsBoard::movePieces(const QVector<QPair<int, int> >& vec)
+{
+	for(int i = 0; i < vec.size() - 1; ++i) {
+		m_btns[vec[i].first][vec[i].second]->showChosen(false);
+		m_btns[vec[i].first][vec[i].second]->showAvaliable(false);
+	}
+	m_btns[vec[vec.size()-1].first][vec[vec.size()-1].second]->setIcon(m_btns[vec[0].first][vec[0].second]->getCategory());
+	m_btns[vec[0].first][vec[0].second]->setIcon(Piece::NONE);
+}
+
+void DraughtsBoard::removePieces(const QVector<QPair<int, int> >& vec)
+{
+	for(auto p : vec) {
+		m_btns[p.first][p.second]->setIcon(Piece::NONE);
+		m_btns[p.first][p.second]->showChosen(false);
+		m_btns[p.first][p.second]->showAvaliable(false);
+		m_btns[p.first][p.second]->setClickable(false);
+	}
+}
+
+void DraughtsBoard::upgrade(const QPair<int, int>& p)
+{
+	if(m_btns[p.first][p.second]->getCategory() == Piece::WHITE) {
+		m_btns[p.first][p.second]->setIcon(Piece::WKING);
+	} else if (m_btns[p.first][p.second]->getCategory() == Piece::BLACK) {
+		m_btns[p.first][p.second]->setIcon(Piece::BKING);
+	} else {
+		qDebug() << "upgrade error";
+	}
+}
+
 void DraughtsBoard::btnClicked(const QPair<int, int>& posi)
 {
 	qDebug() << "button" << posi << "is chosen";
 	m_btns[posi.first][posi.second]->showChosen(true);
 	emit chosenButton(posi);
+}
+
+
+void DraughtsBoard::on_sound_toggled(bool soundOn)
+{
+	qDebug() << soundOn;
 }

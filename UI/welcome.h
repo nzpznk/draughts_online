@@ -16,7 +16,8 @@ class Welcome : public QDialog
 
 signals:
 	void initServerMsg(int port);
-	void initClientMsg(const QHostAddress& hostIp, int hostPort, int clientPort);
+	void initClientMsg(const QHostAddress& hostIp, int hostPort);
+	void initGameMsg(const QString& path);
 
 public:
 	explicit Welcome(QWidget *parent = 0);
