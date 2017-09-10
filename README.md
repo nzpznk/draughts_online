@@ -16,28 +16,28 @@
 
 ### 极为朴素的欢迎与网络配置界面
 
-![](./show/show1.png)
-<!-- ![](https://github.com/nzpznk/draughts_online/blob/master/show/show1.PNG) -->
+<!-- ![](./show/show1.png) -->
+![](https://github.com/nzpznk/draughts_online/blob/master/show/show1.PNG)
 
 ### <del>巧克力饼干一样的</del> 棋盘格子与 <del>蒙了马赛克一样的</del> 棋子
 
-![](./show/show2.png)
-<!-- ![](https://github.com/nzpznk/draughts_online/blob/master/show/show2.PNG) -->
+<!-- ![](./show/show2.png) -->
+![](https://github.com/nzpznk/draughts_online/blob/master/show/show2.PNG)
 
 ### 纯黄色边框的可选中棋子与大红色的提示（<del> 忽略这配色 </del>）
 
-![](./show/show3.png)
-<!-- ![](https://github.com/nzpznk/draughts_online/blob/master/show/show3.PNG) -->
+<!-- ![](./show/show3.png) -->
+![](https://github.com/nzpznk/draughts_online/blob/master/show/show3.PNG)
 
 ### 到达底线加冕后的白方棋子
 
-![](./show/show4.png)
-<!-- ![](https://github.com/nzpznk/draughts_online/blob/master/show/show4.PNG) -->
+<!-- ![](./show/show4.png) -->
+![](https://github.com/nzpznk/draughts_online/blob/master/show/show4.PNG)
 
 ### 胜不骄，败不馁
 
-![](./show/show5.png)
-<!-- ![](https://github.com/nzpznk/draughts_online/blob/master/show/show5.PNG) -->
+<!-- ![](./show/show5.png) -->
+![](https://github.com/nzpznk/draughts_online/blob/master/show/show5.PNG)
 
 ## 模块划分：
 
