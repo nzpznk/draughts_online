@@ -4,6 +4,7 @@
 
 QT       += core gui
 QT       += network
+QT       += multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,7 +12,6 @@ TARGET = draughts_online
 TEMPLATE = app
 
 SOURCES += \
-#    main.cpp\
 #    mainwindow.cpp \
     logic/game.cpp \
     client/client.cpp \
@@ -20,10 +20,10 @@ SOURCES += \
 #    main.cpp \
     UI/draughtsboard.cpp \
     UI/piecebtn.cpp \
-    test/testpiecebtn.cpp \
+#    test/testpiecebtn.cpp \
     test/test.cpp \
     UI/icons.cpp \
-    test/testdraughtsboard.cpp \
+#    test/testdraughtsboard.cpp \
     server/server.cpp
 
 HEADERS  += \
@@ -38,9 +38,9 @@ HEADERS  += \
     UI/welcome.h \
     UI/draughtsboard.h \
     UI/piecebtn.h \
-    test/testpiecebtn.h \
+#    test/testpiecebtn.h \
     UI/icons.h \
-    test/testdraughtsboard.h \
+#    test/testdraughtsboard.h \
     server/server.h
 
 FORMS    += \
@@ -48,8 +48,8 @@ FORMS    += \
 #    client/client.ui \
     UI/welcome.ui \
     UI/draughtsboard.ui \
-    test/testpiecebtn.ui \
-    test/testdraughtsboard.ui
+#    test/testpiecebtn.ui \
+#    test/testdraughtsboard.ui
 
 INCLUDEPATH += \
         ./logic \

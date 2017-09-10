@@ -62,4 +62,6 @@ void Welcome::startConnection()
 	qDebug() << "emit initClientMsg:" << QHostAddress(ui->host_ip->text()) << "serverPort:" << serverPort;
 	emit initGameMsg("./test.txt");
 	emit initClientMsg(QHostAddress(ui->host_ip->text()), serverPort);
+	emit showGameBoard();
+	this->close();
 }

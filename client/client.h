@@ -22,9 +22,12 @@ signals:
 	void updateAvaliableMsg(const QSet< QPair<int, int> >& btns, bool avaliable); // connected
 	void updateHintMsg(const QSet< QPair<int, int> >& btns, bool hint);
 	void moveMsg(const QVector< QPair<int, int> >& btns);
-	void removeMsg(const QVector< QPair<int, int> >& btns);/////////////
+	void removeMsg(const QVector< QPair<int, int> >& btns);
 	void showWinMsg(bool isWinner);
 	void upgradeMsg(const QPair<int, int>& p);
+	void drawRequestMsg(); // connect with gui
+	void drawAnswer(bool ok);
+	void showEasyWin();
 
 public:
 	explicit Client(QObject* parent = 0);
@@ -34,6 +37,9 @@ public slots:
 	void connectHost(const QHostAddress& host, int hostPort);
 	void startGame(const QString& path);
 	void chooseBtn(const QPair<int, int>& posi);
+	void askForDraw();
+	void sendDrawAnswer(bool ok);
+	void sendLoseRequest();
 
 private slots:
 	void receiveMsg();
@@ -42,17 +48,12 @@ private slots:
 
 private:
 	void solveMsg(const Message& msg);
-	void updateHints(); //////////////// 依据可选路径和已走路径更新下一步的提示
-	void updateNextBtns(); /////////////// 依据可选路径和已走路径更新下一步可选的棋子
+	void updateHints(); // 依据可选路径和已走路径更新下一步的提示
+	void updateNextBtns(); // 依据可选路径和已走路径更新下一步可选的棋子
 	void on_pushButton_clicked();
 
 public:
-	//if cannot move, send win/lose message
-//	QPair<int, int> movePiece(const QPair<int, int>& st, const QPair<int, int>& ed);
-//	void removePiece(const QVector< QPair<int, int> >& pieces);
-//	void showGame();
 	void sendMsg(const Message& msg);
-//	void updateRoutes();
 
 private:
 	Game* game;

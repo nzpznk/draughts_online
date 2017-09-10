@@ -3,9 +3,14 @@
 
 DraughtsBoard::DraughtsBoard(QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::DraughtsBoard)
+	ui(new Ui::DraughtsBoard),
+	m_clicksound(this)
 {
 	ui->setupUi(this);
+	m_soundOn = true;
+	ui->sound->setChecked(true);
+	m_clicksound.setSource(QUrl::fromLocalFile(":/sound/resources/settle.wav"));
+	m_clicksound.setVolume(1.0f);
 }
 
 DraughtsBoard::~DraughtsBoard()
@@ -29,6 +34,7 @@ void DraughtsBoard::initWithMat(const QVector< QVector<Piece> >& mat)
 			if( (i + j) & 1 ) {
 				connect(btn, &PieceBtn::clicked, [=]() {
 					btnClicked(QPair<int, int>(i, j));
+					if(m_soundOn) m_clicksound.play();
 				});
 			}
 		}
@@ -89,6 +95,58 @@ void DraughtsBoard::upgrade(const QPair<int, int>& p)
 	}
 }
 
+void DraughtsBoard::showDrawRequest()
+{
+	int ret = QMessageBox::warning(this, QStringLiteral("对方请求和棋"),
+								   QStringLiteral("你同意吗"),
+								   QMessageBox::Yes
+								   | QMessageBox::No);
+	if(ret & QMessageBox::Yes) {
+		emit drawAnswerMsg(true);
+		qDebug() << "request draw";
+		this->close();
+	} else {
+		emit drawAnswerMsg(false);
+		qDebug() << "cancel request draw";
+	}
+}
+
+void DraughtsBoard::showDrawAnswer(bool ok)
+{
+	if(ok) {
+		QMessageBox::information( this, QStringLiteral("和棋"), \
+										QStringLiteral("对方接受了你的请求"),\
+										QMessageBox::Cancel);
+		this->close();
+	} else {
+		QMessageBox::information( this, QStringLiteral("和棋"), \
+										QStringLiteral("对方拒绝了你的请求"),\
+										QMessageBox::Cancel);
+	}
+}
+
+void DraughtsBoard::showEasyWin()
+{
+	QMessageBox::information( this, QStringLiteral("获胜"), \
+									QStringLiteral("对方投降, 你已获胜"),\
+							  QMessageBox::Cancel);
+	this->close();
+}
+
+void DraughtsBoard::showIsWinner(bool isWinner)
+{
+	if(isWinner) {
+		QMessageBox::information( this, QStringLiteral("获胜"), \
+										QStringLiteral("恭喜, 你已获胜"),\
+										QMessageBox::Cancel);
+	} else {
+		QMessageBox::information( this, QStringLiteral("失败"), \
+										QStringLiteral("再接再厉"),\
+										QMessageBox::Cancel);
+	}
+	this->close();
+}
+
 void DraughtsBoard::btnClicked(const QPair<int, int>& posi)
 {
 	qDebug() << "button" << posi << "is chosen";
@@ -99,5 +157,34 @@ void DraughtsBoard::btnClicked(const QPair<int, int>& posi)
 
 void DraughtsBoard::on_sound_toggled(bool soundOn)
 {
-	qDebug() << soundOn;
+	m_soundOn = soundOn;
+}
+
+void DraughtsBoard::on_draw_request_triggered()
+{
+	int ret = QMessageBox::warning(this, QStringLiteral("请求和棋"),
+								   QStringLiteral("你确定要和棋吗"),
+								   QMessageBox::Ok
+								   | QMessageBox::Cancel);
+	if(ret & QMessageBox::Ok) {
+		emit drawMsg();
+		qDebug() << "request draw";
+	} else {
+		qDebug() << "cancel request draw";
+	}
+}
+
+void DraughtsBoard::on_giveup_triggered()
+{
+	int ret = QMessageBox::warning(this, QStringLiteral("认输"),
+								   QStringLiteral("你确定要认输吗"),
+								   QMessageBox::Ok
+								   | QMessageBox::Cancel);
+	if(ret & QMessageBox::Ok) {
+		emit loseMsg();
+		qDebug() << "request lose";
+	} else {
+		qDebug() << "cancel request lose";
+	}
+	this->close();
 }

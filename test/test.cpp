@@ -76,6 +76,14 @@ void testCombined() {
 	QObject::connect(client1, SIGNAL(moveMsg(QVector<QPair<int,int> >)), board1, SLOT(movePieces(QVector<QPair<int,int> >)));
 	QObject::connect(client1, SIGNAL(removeMsg(QVector<QPair<int,int> >)), board1, SLOT(removePieces(QVector<QPair<int,int> >)));
 	QObject::connect(client1, SIGNAL(upgradeMsg(QPair<int,int>)), board1, SLOT(upgrade(QPair<int,int>)));
+	QObject::connect(board1, SIGNAL(drawMsg()), client1, SLOT(askForDraw()));
+	QObject::connect(client1, SIGNAL(drawRequestMsg()), board1, SLOT(showDrawRequest()));
+	QObject::connect(board1, SIGNAL(drawAnswerMsg(bool)), client1, SLOT(sendDrawAnswer(bool)));
+	QObject::connect(client1, SIGNAL(drawAnswer(bool)), board1, SLOT(showDrawAnswer(bool)));
+	QObject::connect(board1, SIGNAL(loseMsg()), client1, SLOT(sendLoseRequest()));
+	QObject::connect(client1, SIGNAL(showEasyWin()), board1, SLOT(showEasyWin()));
+	QObject::connect(client1, SIGNAL(showWinMsg(bool)), board1, SLOT(showIsWinner(bool)));
+	QObject::connect(wel1, SIGNAL(showGameBoard()), board1, SLOT(show()));
 
 	DraughtsBoard* board2 = new DraughtsBoard;
 	Client* client2 = new Client;
@@ -92,8 +100,15 @@ void testCombined() {
 	QObject::connect(client2, SIGNAL(moveMsg(QVector<QPair<int,int> >)), board2, SLOT(movePieces(QVector<QPair<int,int> >)));
 	QObject::connect(client2, SIGNAL(removeMsg(QVector<QPair<int,int> >)), board2, SLOT(removePieces(QVector<QPair<int,int> >)));
 	QObject::connect(client2, SIGNAL(upgradeMsg(QPair<int,int>)), board2, SLOT(upgrade(QPair<int,int>)));
-	board1->show();
-	board2->show();
+	QObject::connect(board2, SIGNAL(drawMsg()), client2, SLOT(askForDraw()));
+	QObject::connect(client2, SIGNAL(drawRequestMsg()), board2, SLOT(showDrawRequest()));
+	QObject::connect(board2, SIGNAL(drawAnswerMsg(bool)), client2, SLOT(sendDrawAnswer(bool)));
+	QObject::connect(client2, SIGNAL(drawAnswer(bool)), board2, SLOT(showDrawAnswer(bool)));
+	QObject::connect(board2, SIGNAL(loseMsg()), client2, SLOT(sendLoseRequest()));
+	QObject::connect(client2, SIGNAL(showEasyWin()), board2, SLOT(showEasyWin()));
+	QObject::connect(client2, SIGNAL(showWinMsg(bool)), board2, SLOT(showIsWinner(bool)));
+	QObject::connect(wel2, SIGNAL(showGameBoard()), board2, SLOT(show()));
+
 	wel1->show();
 	wel2->show();
 }

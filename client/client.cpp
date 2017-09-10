@@ -47,6 +47,22 @@ void Client::chooseBtn(const QPair<int, int>& posi)
 	}
 }
 
+void Client::askForDraw()
+{
+	sendMsg(Message("draw", QVector< QPair<int, int> >()));
+}
+
+void Client::sendDrawAnswer(bool ok)
+{
+	QString ans = ok ? "okdraw" : "nodraw";
+	sendMsg(Message(ans, QVector< QPair<int, int> >()));
+}
+
+void Client::sendLoseRequest()
+{
+	sendMsg(Message("easywin", QVector< QPair<int, int> >()));
+}
+
 void Client::receiveMsg()
 {
 	Message msg;
@@ -92,6 +108,16 @@ void Client::solveMsg(const Message& msg)
 			m_root_btns.insert(key);
 		}
 		emit updateAvaliableMsg(m_root_btns, true);
+		if(m_root_btns.size() == 0) {
+			sendMsg(Message("win", QVector< QPair<int, int> >()));
+			emit showWinMsg(false);
+		}
+	} else if (msg.str == "draw") {
+		emit drawRequestMsg();
+	} else if (msg.str == "okdraw") {
+		emit drawAnswer(true);
+	} else if (msg.str == "nodraw") {
+		emit drawAnswer(false);
 	} else if (msg.str == "finish") { // if the other one finished, it's turn
 		m_all_avaliable_routes = game->getAllMovablePieces(isBlack);
 		emit updateAvaliableMsg(m_root_btns, false);
@@ -101,7 +127,7 @@ void Client::solveMsg(const Message& msg)
 			m_root_btns.insert(key);
 		}
 		emit updateAvaliableMsg(m_root_btns, true);
-		//////////// remove hints and avaliable btns
+		// remove hints and avaliable btns
 	} else if (msg.str == "black") {
 		isBlack = true;
 		m_all_avaliable_routes = game->getAllMovablePieces(isBlack);
@@ -120,6 +146,8 @@ void Client::solveMsg(const Message& msg)
 		emit showWinMsg(true);
 	} else if (msg.str == "lose") {
 		emit showWinMsg(false);
+	} else if(msg.str == "easywin") {
+		emit showEasyWin();
 	}
 }
 
