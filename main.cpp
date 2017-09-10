@@ -45,7 +45,6 @@ int main(int argc, char *argv[]) {
 	QObject::connect(client1, SIGNAL(showEasyWin()), board1, SLOT(showEasyWin()));
 	QObject::connect(client1, SIGNAL(showWinMsg(bool)), board1, SLOT(showIsWinner(bool)));
 	QObject::connect(wel1, SIGNAL(showGameBoard()), board1, SLOT(show()));
-	board1->show();
 	wel1->show();
 
 	return app.exec();

@@ -17,11 +17,11 @@ SOURCES += \
     client/client.cpp \
 #    test/simpleserver.cpp \
     UI/welcome.cpp \
-#    main.cpp \
+    main.cpp \
     UI/draughtsboard.cpp \
     UI/piecebtn.cpp \
 #    test/testpiecebtn.cpp \
-    test/test.cpp \
+#    test/test.cpp \
     UI/icons.cpp \
 #    test/testdraughtsboard.cpp \
     server/server.cpp
