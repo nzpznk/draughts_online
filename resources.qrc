@@ -10,4 +10,8 @@
     <qresource prefix="/sound">
         <file>resources/settle.wav</file>
     </qresource>
+    <qresource prefix="/mat">
+        <file>resources/standard.txt</file>
+        <file>resources/test.txt</file>
+    </qresource>
 </RCC>

@@ -71,6 +71,7 @@ void DraughtsBoard::movePieces(const QVector<QPair<int, int> >& vec)
 		m_btns[vec[i].first][vec[i].second]->showAvaliable(false);
 	}
 	m_btns[vec[vec.size()-1].first][vec[vec.size()-1].second]->setIcon(m_btns[vec[0].first][vec[0].second]->getCategory());
+	m_btns[vec[vec.size()-1].first][vec[vec.size()-1].second]->showChosen(false);
 	m_btns[vec[0].first][vec[0].second]->setIcon(Piece::NONE);
 }
 

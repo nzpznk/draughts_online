@@ -60,7 +60,8 @@ void Welcome::startConnection()
 		emit initServerMsg(serverPort);
 	}
 	qDebug() << "emit initClientMsg:" << QHostAddress(ui->host_ip->text()) << "serverPort:" << serverPort;
-	emit initGameMsg("./test.txt");
+//	emit initGameMsg(":/mat/resources/test.txt");
+	emit initGameMsg(":/mat/resources/standard.txt");
 	emit initClientMsg(QHostAddress(ui->host_ip->text()), serverPort);
 	emit showGameBoard();
 	this->close();
